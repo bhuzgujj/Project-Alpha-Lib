@@ -6,6 +6,7 @@ namespace PersonnalLib
 {
     class CombatModel
     {
+        // Struct
         public struct AttackTypes
         {
             public double Physical;
@@ -26,7 +27,25 @@ namespace PersonnalLib
 
         // Getters
         public AttackTypes GetOffensives() => this.__Offensives__;
+        public double GetPhysOffensive() => this.__Offensives__.Physical;
+        public double GetMageOffensive() => this.__Offensives__.Magical;
+        public double GetPsyOffensive() => this.__Offensives__.Psychological;
+
+        public AttackTypes GetBaseOffensives() => this.__BaseOffensives__;
+        public double GetBasePhysOffensive() => this.__BaseOffensives__.Physical;
+        public double GetBaseMageOffensive() => this.__BaseOffensives__.Magical;
+        public double GetBasePsyOffensive() => this.__BaseOffensives__.Psychological;
+
         public AttackTypes GetDefensives() => this.__Defensives__;
+        public double GetPhysDefensive() => this.__Defensives__.Physical;
+        public double GetMageDefensive() => this.__Defensives__.Magical;
+        public double GetPsyDefensive() => this.__Defensives__.Psychological;
+
+        public AttackTypes GetBaseDefensives() => this.__BaseOffensives__;
+        public double GetBasePhysDefensive() => this.__BaseOffensives__.Physical;
+        public double GetBaseMageDefensive() => this.__BaseOffensives__.Magical;
+        public double GetBasePsyDefensive() => this.__BaseOffensives__.Psychological;
+
         public int GetMaxHealth() => this.__MaxHealth__;
         public int GetCurrentHealth() => this.__CurrentHealth__;
 
