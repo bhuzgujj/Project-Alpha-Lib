@@ -6,83 +6,92 @@ namespace PersonnalLib
 {
     class CombatModel
     {
+        public struct AttackTypes
+        {
+            public double Physical;
+            public double Magical;
+            public double Psychological;
+        }
+
         // Enums
-        public enum AttackType { Physical=0, Magical, Psychological }
+        public enum CombatType { Physical = 0, Magical, Psychological }
 
         // Private Field
-        private double __Offensive__;
-        private AttackType __OffensiveType__;
-        private double __PhysDefensive__;
-        private double __MagicDefensive__;
-        private double __PsyDefensive__;
+        private AttackTypes __Offensives__;
+        private AttackTypes __BaseOffensives__;
+        private AttackTypes __Defensives__;
+        private AttackTypes __BaseDefensives__;
         private int __MaxHealth__;
         private int __CurrentHealth__;
 
         // Getters
-        public double GetOffensive() => this.__Offensive__;
-        public AttackType GetOffensiveType() => this.__OffensiveType__;
-        public double GetPhysDefensive() => this.__PhysDefensive__;
-        public double GetMagicDefensive() => this.__MagicDefensive__;
-        public double GetPsyDefensive() => this.__PsyDefensive__;
+        public AttackTypes GetOffensives() => this.__Offensives__;
+        public AttackTypes GetDefensives() => this.__Defensives__;
         public int GetMaxHealth() => this.__MaxHealth__;
         public int GetCurrentHealth() => this.__CurrentHealth__;
 
         // Setter
-        public void SetOffensive(double p_offensive) 
+        public void SetOffensives(double p_physical, double p_magical, double p_psychological)
         {
-            if (p_offensive <= 0)
-                throw new ArgumentOutOfRangeException();
-            this.__Offensive__= p_offensive; 
+            if (p_physical < 0 || p_magical < 0 || p_psychological < 0)
+                throw new ArgumentOutOfRangeException("Offensives can't be negative!");
+            this.__BaseOffensives__ = new AttackTypes { Physical = p_physical, Magical = p_magical, Psychological = p_psychological };
+            this.__Offensives__ = new AttackTypes { Physical = p_physical, Magical = p_magical, Psychological = p_psychological };
         }
-        public void SetOffensiveType(AttackType p_attackType) 
-        { 
-            this.__OffensiveType__ = p_attackType; 
-        }
-        public void SetPhysDefensive(double p_defensive) 
-        { 
-            this.__PhysDefensive__= p_defensive; 
-        }
-        public void SetMagicDefensive(double p_defensive) 
+        public void SetDefensives(double p_physical, double p_magical, double p_psychological)
         {
-            this.__MagicDefensive__ = p_defensive; 
+            this.__BaseDefensives__ = new AttackTypes { Physical = p_physical, Magical = p_magical, Psychological = p_psychological };
+            this.__Defensives__ = new AttackTypes { Physical = p_physical, Magical = p_magical, Psychological = p_psychological };
         }
-        public void SetPsyDefensive(double p_defensive) 
-        { 
-            this.__PsyDefensive__ = p_defensive; 
-        }
-        public void SetMaxHealth(int p_health) 
+        public void SetMaxHealth(int p_health)
         {
             if (p_health <= 0)
-                throw new ArgumentOutOfRangeException("Must be higher than 0");
-            this.__MaxHealth__ = p_health; 
+                throw new ArgumentOutOfRangeException("Max health must be higher than 0");
+            this.__MaxHealth__ = p_health;
         }
-        public void SetCurrentHealth(int p_health) 
+        public void SetCurrentHealth(int p_health)
         {
             if (p_health < 0)
-                throw new ArgumentOutOfRangeException("Must be higher or equal than 0");
+                throw new ArgumentOutOfRangeException("Current health must be higher or equal to 0");
             if (p_health > this.__MaxHealth__)
-                throw new ArgumentOutOfRangeException();
-            this.__CurrentHealth__ = p_health; 
+                throw new ArgumentOutOfRangeException("Current health must be lower than or equal to Max health");
+            this.__CurrentHealth__ = p_health;
         }
 
         // Builders
-        public CombatModel(double p_offensive, double p_physDef, double p_magicDef, double p_psyDef, int p_maxHealth, int p_currentHealth): 
-            this(p_offensive, AttackType.Physical, p_physDef, p_magicDef, p_psyDef, p_maxHealth, p_currentHealth) { }
-        public CombatModel(double p_offensive, double p_physDef, double p_psyDef, int p_maxHealth, int p_currentHealth): 
-            this(p_offensive, AttackType.Physical, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_currentHealth) { }
-        public CombatModel(double p_offensive, AttackType p_offensiveType, double p_physDef, double p_psyDef, int p_maxHealth, int p_currentHealth): 
-            this(p_offensive, p_offensiveType, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_currentHealth) { }
-        public CombatModel(double p_offensive, double p_defensive, int p_maxHealth, int p_currentHealth): 
-            this(p_offensive, AttackType.Physical, p_defensive, p_defensive, p_defensive, p_maxHealth, p_currentHealth) { }
-        public CombatModel(double p_offensive, AttackType p_offensiveType, double p_defensive, int p_maxHealth, int p_currentHealth): 
-            this(p_offensive, p_offensiveType, p_defensive, p_defensive, p_defensive, p_maxHealth, p_currentHealth) { }
-        public CombatModel(double p_offensive, AttackType p_offensiveType, double p_physDef, double p_magicDef, double p_psyDef, int p_maxHealth, int p_currentHealth)
+        // With Currenth health
+        public CombatModel(double p_physOff, double p_psyOff, double p_physDef, double p_magicDef, double p_psyDef, int p_maxHealth, int p_currentHealth) :
+            this(p_physOff, p_physOff, p_psyOff, p_physDef, p_magicDef, p_psyDef, p_maxHealth, p_currentHealth) { }
+        public CombatModel(double p_physOff, double p_psyOff, double p_physDef, double p_psyDef, int p_maxHealth, int p_currentHealth) :
+            this(p_physOff, p_physOff, p_psyOff, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_currentHealth) { }
+        public CombatModel(double p_offensive, double p_physDef, double p_psyDef, int p_maxHealth, int p_currentHealth) :
+            this(p_offensive, p_offensive, p_offensive, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_currentHealth) { }
+        public CombatModel(double p_offensive, double p_defensive, int p_maxHealth, int p_currentHealth) :
+            this(p_offensive, p_offensive, p_offensive, p_defensive, p_defensive, p_defensive, p_maxHealth, p_currentHealth) { }
+        public CombatModel(double p_offenseDefense, int p_maxHealth, int p_currentHealth) :
+            this(p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_maxHealth, p_currentHealth) { }
+        public CombatModel(int p_maxHealth, int p_currentHealth) :
+            this(1, 1, 1, 1, 1, 1, p_maxHealth, p_currentHealth) { }
+        public CombatModel() :
+            this(1, 1, 1, 1, 1, 1, 10, 10) { }
+        // No current health
+        public CombatModel(double p_physOff, double p_psyOff, double p_physDef, double p_magicDef, double p_psyDef, int p_maxHealth) :
+            this(p_physOff, p_physOff, p_psyOff, p_physDef, p_magicDef, p_psyDef, p_maxHealth, p_maxHealth) { }
+        public CombatModel(double p_physOff, double p_psyOff, double p_physDef, double p_psyDef, int p_maxHealth) :
+            this(p_physOff, p_physOff, p_psyOff, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_maxHealth) { }
+        public CombatModel(double p_offensive, double p_physDef, double p_psyDef, int p_maxHealth) :
+            this(p_offensive, p_offensive, p_offensive, p_physDef, p_physDef, p_psyDef, p_maxHealth, p_maxHealth) { }
+        public CombatModel(double p_offensive, double p_defensive, int p_maxHealth) :
+            this(p_offensive, p_offensive, p_offensive, p_defensive, p_defensive, p_defensive, p_maxHealth, p_maxHealth) { }
+        public CombatModel(double p_offenseDefense, int p_maxHealth) :
+            this(p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_offenseDefense, p_maxHealth, p_maxHealth) { }
+        public CombatModel(int p_maxHealth) :
+            this(1, 1, 1, 1, 1, 1, p_maxHealth, p_maxHealth) { }
+        // Base
+        public CombatModel(double p_physOff, double p_magicOff, double p_psyOff, double p_physDef, double p_magicDef, double p_psyDef, int p_maxHealth, int p_currentHealth)
         {
-            SetOffensive(p_offensive);
-            SetOffensiveType(p_offensiveType);
-            SetPhysDefensive(p_physDef);
-            SetMagicDefensive(p_magicDef);
-            SetPsyDefensive(p_psyDef);
+            SetOffensives(p_physOff, p_magicOff, p_psyOff);
+            SetDefensives(p_physDef, p_magicDef, p_psyDef);
             SetMaxHealth(p_maxHealth);
             SetCurrentHealth(p_currentHealth);
         }
@@ -91,14 +100,156 @@ namespace PersonnalLib
         public void Damage(int p_damageTaken)
         {
             if (p_damageTaken > this.__CurrentHealth__)
-                throw new ArgumentOutOfRangeException();
-            this.__CurrentHealth__ -= p_damageTaken;
+                this.__CurrentHealth__ = 0;
+            else
+                this.__CurrentHealth__ -= p_damageTaken;
         }
         public void Heal(int p_heal)
         {
-            if ((p_heal + this.__CurrentHealth__) > this.__MaxHealth__)
-                throw new ArgumentOutOfRangeException();
-            this.__CurrentHealth__ += p_heal;
+            if (!IsDead())
+            {
+                if ((p_heal + this.__CurrentHealth__) > this.__MaxHealth__)
+                    this.__CurrentHealth__ = this.__MaxHealth__;
+                else
+                    this.__CurrentHealth__ += p_heal;
+            }
+        }
+        public bool IsDead() => this.__CurrentHealth__ == 0;
+        public bool Resurection(int p_heal = 0)
+        {
+            if (IsDead())
+            {
+                if (p_heal == 0)
+                    this.__CurrentHealth__ = (int)(this.__MaxHealth__ * 0.2);
+                else if (p_heal < 0)
+                    throw new ArgumentOutOfRangeException("Health can't be negatif");
+                else if (p_heal > this.__MaxHealth__)
+                    throw new ArgumentOutOfRangeException("Current health can't be higher than Max health");
+                else
+                    this.__CurrentHealth__ = p_heal;
+                return true;
+            }
+            return false;
+        }
+        public void ModifyerOffenseAdd(CombatType p_combatType, double p_buff)
+        {
+            switch (p_combatType)
+            {
+                case CombatType.Physical: 
+                    if (p_buff + this.__Offensives__.Physical >= 0) 
+                    { 
+                        this.__Offensives__.Physical += p_buff; 
+                    } 
+                    break;
+                case CombatType.Magical:
+                    if (p_buff + this.__Offensives__.Magical >= 0)
+                    {
+                        this.__Offensives__.Magical += p_buff; 
+                    }
+                    break;
+                case CombatType.Psychological:
+                    if (p_buff + this.__Offensives__.Psychological >= 0)
+                    {
+                        this.__Offensives__.Psychological += p_buff;
+                    } 
+                    break;
+                default: 
+                    throw new ArgumentException("CombatType invalid!");
+            }
+        }
+        public void ModifyerOffenseMulti(CombatType p_combatType, double p_buff)
+        {
+            if (p_buff < 0)
+                throw new ArgumentOutOfRangeException("Modifyer can't be negative!");
+            switch (p_combatType)
+            {
+                case CombatType.Physical: this.__Offensives__.Physical *= p_buff; break;
+                case CombatType.Magical: this.__Offensives__.Magical *= p_buff; break;
+                case CombatType.Psychological: this.__Offensives__.Psychological *= p_buff; break;
+                default: throw new ArgumentException("CombatType invalid!");
+            }
+        }
+        public void ModifyerDefenseAdd(CombatType p_combatType, double p_buff)
+        {
+            switch (p_combatType)
+            {
+                case CombatType.Physical:
+                    if (p_buff + this.__Defensives__.Physical >= 0)
+                    {
+                        this.__Defensives__.Physical += p_buff;
+                    }
+                    break;
+                case CombatType.Magical:
+                    if (p_buff + this.__Defensives__.Magical >= 0)
+                    {
+                        this.__Defensives__.Magical += p_buff;
+                    }
+                    break;
+                case CombatType.Psychological:
+                    if (p_buff + this.__Defensives__.Psychological >= 0)
+                    {
+                        this.__Defensives__.Psychological += p_buff;
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("CombatType invalid!");
+            }
+        }
+        public void ModifyerDefenseMulti(CombatType p_combatType, double p_buff)
+        {
+            if (p_buff < 0)
+                throw new ArgumentOutOfRangeException("Modifyer can't be negative!");
+            switch (p_combatType)
+            {
+                case CombatType.Physical: this.__Defensives__.Physical *= p_buff; break;
+                case CombatType.Magical: this.__Defensives__.Magical *= p_buff; break;
+                case CombatType.Psychological: this.__Defensives__.Psychological *= p_buff; break;
+                default: throw new ArgumentException("CombatType invalid!");
+            }
+        }
+        public void ResetAllDefenseMod()
+        {
+            this.__Defensives__.Physical = this.__BaseDefensives__.Physical;
+            this.__Defensives__.Magical = this.__BaseDefensives__.Magical;
+            this.__Defensives__.Psychological = this.__BaseDefensives__.Psychological;
+        }
+        public void ResetOneDefenseMod(CombatType p_combatType)
+        {
+            switch (p_combatType)
+            {
+                case CombatType.Physical:
+                    this.__Defensives__.Physical = this.__BaseDefensives__.Physical;
+                    break;
+                case CombatType.Magical:
+                    this.__Defensives__.Magical = this.__BaseDefensives__.Magical;
+                    break;
+                case CombatType.Psychological:
+                    this.__Defensives__.Psychological = this.__BaseDefensives__.Psychological;
+                    break;
+                default: throw new ArgumentException("CombatType invalid!");
+            }
+        }
+        public void ResetAllOffenseMod()
+        {
+            this.__Offensives__.Physical = this.__BaseOffensives__.Physical;
+            this.__Offensives__.Magical = this.__BaseOffensives__.Magical;
+            this.__Offensives__.Psychological = this.__BaseOffensives__.Psychological;
+        }
+        public void ResetOneOffenseMod(CombatType p_combatType)
+        {
+            switch (p_combatType)
+            {
+                case CombatType.Physical:
+                    this.__Offensives__.Physical = this.__BaseOffensives__.Physical;
+                    break;
+                case CombatType.Magical:
+                    this.__Offensives__.Magical = this.__BaseOffensives__.Magical;
+                    break;
+                case CombatType.Psychological:
+                    this.__Offensives__.Psychological = this.__BaseOffensives__.Psychological;
+                    break;
+                default: throw new ArgumentException("CombatType invalid!");
+            }
         }
     }
 }
